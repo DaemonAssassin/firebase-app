@@ -84,30 +84,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(height: 50.0),
                   RoundButton(
                       isLoading: isLoading,
-                      onTap: () async {
+                      onTap: () {
                         bool isValid = _formKey.currentState!.validate();
                         if (isValid) {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          try {
-                            await _firebaseAuth.createUserWithEmailAndPassword(
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                            );
-                            HelperWidgets.showToast(
-                                'Account Created Successfully!');
-                            setState(() {
-                              isLoading = false;
-                              _emailController.clear();
-                              _passwordController.clear();
-                            });
-                          } catch (e) {
-                            HelperWidgets.showToast(e.toString());
-                            setState(() {
-                              isLoading = false;
-                            });
-                          }
+                          signupUser();
                         }
                       },
                       title: 'Signup'),
@@ -135,5 +115,30 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       ),
     );
+  }
+
+  void signupUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await _firebaseAuth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      HelperWidgets.showToast(
+        'Account Created Successfully!',
+      );
+      setState(() {
+        isLoading = false;
+        _emailController.clear();
+        _passwordController.clear();
+      });
+    } catch (e) {
+      HelperWidgets.showToast(e.toString());
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 }

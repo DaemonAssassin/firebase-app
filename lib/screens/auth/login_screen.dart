@@ -1,7 +1,12 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_firebase/screens/auth/signup_screen.dart';
+import 'package:flutter_firebase/screens/post/post_screen.dart';
 import 'package:flutter_firebase/screens/widgets/round_button.dart';
+import 'package:flutter_firebase/utils/helper_widgets.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -14,12 +19,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  late final FirebaseAuth _firebaseAuth;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _firebaseAuth = FirebaseAuth.instance;
   }
 
   @override
@@ -84,9 +92,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 50.0),
                   RoundButton(
+                      isLoading: isLoading,
                       onTap: () {
                         bool isValid = _formKey.currentState!.validate();
-                        if (isValid) {}
+                        if (isValid) {
+                          loginUser();
+                        }
                       },
                       title: 'Login'),
                   const SizedBox(height: 16.0),
@@ -113,5 +124,28 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void loginUser() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      UserCredential userCredential =
+          await _firebaseAuth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      print(userCredential.user?.email);
+      HelperWidgets.showToast('Login Successful');
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => const PostScreen(),
+      ));
+    } catch (e) {
+      HelperWidgets.showToast(e.toString());
+    }
+    setState(() {
+      isLoading = true;
+    });
   }
 }

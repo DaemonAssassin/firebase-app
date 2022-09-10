@@ -5,6 +5,7 @@ import 'package:flutter_firebase/screens/splash_screen.dart';
 void main(List<String> args) {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 

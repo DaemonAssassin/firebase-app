@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/screens/auth/login_screen.dart';
-import 'package:flutter_firebase/screens/widgets/round_button.dart';
-import 'package:flutter_firebase/utils/helper_widgets.dart';
+import '../../utils/helper_widgets.dart';
+import '../widgets/round_button.dart';
+import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -59,7 +59,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
-                        return 'Enter Email';
+                        return 'Enter Valid Email';
                       }
                       return null;
                     },
@@ -76,7 +76,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
-                        return 'Enter Password';
+                        return 'Enter Valid Password';
                       }
                       return null;
                     },

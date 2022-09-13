@@ -3,10 +3,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_firebase/screens/auth/signup_screen.dart';
-import 'package:flutter_firebase/screens/post/post_screen.dart';
-import 'package:flutter_firebase/screens/widgets/round_button.dart';
-import 'package:flutter_firebase/utils/helper_widgets.dart';
+import 'package:flutter_firebase/screens/auth/login_with_phone_no_screen.dart';
+
+import '../../utils/helper_widgets.dart';
+import '../post/post_screen.dart';
+import '../widgets/round_button.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -116,6 +118,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Text('Sign Up'),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 16.0),
+                  RoundButton(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const LoginWithPhoneNoScreen(),
+                      ));
+                    },
+                    title: 'Login With Phone',
                   ),
                 ],
               ),

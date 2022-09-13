@@ -1,8 +1,10 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/screens/auth/login_screen.dart';
+import 'package:flutter_firebase/screens/post/add_new_post_screen.dart';
+import 'package:flutter_firebase/screens/widgets/round_button.dart';
 import 'package:flutter_firebase/utils/helper_widgets.dart';
 
 class PostScreen extends StatefulWidget {
@@ -15,13 +17,22 @@ class PostScreen extends StatefulWidget {
 class _PostScreenState extends State<PostScreen> {
   late FirebaseAuth _firebaseAuth;
 
+  late TextEditingController _searchController;
+
   @override
   void initState() {
     super.initState();
     _firebaseAuth = FirebaseAuth.instance;
+    _searchController = TextEditingController();
     _firebaseAuth.authStateChanges().listen((User? user) {
       user == null ? print('signedOut') : print('SignIn');
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,6 +59,92 @@ class _PostScreenState extends State<PostScreen> {
             icon: const Icon(Icons.logout),
           ),
         ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: _searchController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  hintText: 'Search',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.search),
+                ),
+                onChanged: (value) => setState(() {}),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter Search';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(height: 30.0),
+            //* using StreamBuilder
+            // Expanded(
+            //   child: StreamBuilder<DatabaseEvent>(
+            //     stream: FirebaseDatabase.instance.ref('Truck').onValue,
+            //     builder: (context, snapshot) {
+            //       if (snapshot.hasData) {
+            //         Map<dynamic, dynamic> map =
+            //             snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+            //         List<dynamic> list = [...map.values.toList()];
+            //         print(map);
+
+            //         return ListView.builder(
+            //             itemCount: snapshot.data!.snapshot.children.length,
+            //             itemBuilder: (context, index) {
+            //               return ListTile(
+            //                 title: Text(list[index]['title'].toString()),
+            //                 subtitle: Text(list[index]['id'].toString()),
+            //               );
+            //             });
+            //       } else {
+            //         return const CircularProgressIndicator();
+            //       }
+            //     },
+            //   ),
+            // ),
+            // //* using FirebaseAnimatedList
+            Expanded(
+              child: FirebaseAnimatedList(
+                query: FirebaseDatabase.instance.ref('Truck'),
+                defaultChild: const Center(child: Text('Loading')),
+                itemBuilder: (context, snapshot, animation, index) {
+                  String title = snapshot.child('title').value.toString();
+                  if (_searchController.text.isEmpty) {
+                    return ListTile(
+                      title: Text(snapshot.child('id').value.toString()),
+                      subtitle: Text(snapshot.child('title').value.toString()),
+                    );
+                  } else if (title
+                      .trim()
+                      .toLowerCase()
+                      .contains(_searchController.text.toLowerCase())) {
+                    return ListTile(
+                      title: Text(snapshot.child('id').value.toString()),
+                      subtitle: Text(snapshot.child('title').value.toString()),
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
+            ),
+            RoundButton(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const AddNewPostScreen(),
+                ));
+              },
+              title: 'Add New Post',
+            ),
+          ],
+        ),
       ),
     );
   }

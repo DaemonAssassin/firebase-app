@@ -120,10 +120,11 @@ class _PostScreenState extends State<PostScreen> {
                 defaultChild: const Center(child: Text('Loading')),
                 itemBuilder: (context, snapshot, animation, index) {
                   String title = snapshot.child('title').value.toString();
+                  String id = snapshot.child('id').value.toString();
                   if (_searchController.text.isEmpty) {
                     return ListTile(
-                      title: Text(snapshot.child('id').value.toString()),
-                      subtitle: Text(snapshot.child('title').value.toString()),
+                      title: Text(id),
+                      subtitle: Text(title),
                       trailing: PopupMenuButton(
                         child: const Icon(Icons.more_vert),
                         itemBuilder: (_) => [
@@ -134,7 +135,7 @@ class _PostScreenState extends State<PostScreen> {
                               onTap: () async {
                                 await showUpdateDialog(
                                   title,
-                                  snapshot.child('id').value.toString(),
+                                  id,
                                 );
                                 Navigator.pop(context);
                               },
@@ -142,10 +143,12 @@ class _PostScreenState extends State<PostScreen> {
                           ),
                           PopupMenuItem(
                             child: ListTile(
-                              leading: const Icon(Icons.delete),
-                              title: const Text('Delete'),
-                              onTap: () => Navigator.pop(context),
-                            ),
+                                leading: const Icon(Icons.delete),
+                                title: const Text('Delete'),
+                                onTap: () async {
+                                  await showDeleteDialog(id);
+                                  Navigator.pop(context);
+                                }),
                           ),
                         ],
                       ),
@@ -223,6 +226,39 @@ class _PostScreenState extends State<PostScreen> {
               },
               child: const Text('Update'),
             ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showDeleteDialog(String id) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete'),
+          content: const Text('Do you really want to delete?'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('No')),
+            TextButton(
+                onPressed: () async {
+                  try {
+                    await FirebaseDatabase.instance
+                        .ref('Truck')
+                        .child(id)
+                        .remove();
+                    HelperWidgets.showToast('Deleted Successfully');
+                  } catch (e) {
+                    HelperWidgets.showToast(e.toString());
+                  }
+                  Navigator.pop(context);
+                },
+                child: const Text('Yes')),
           ],
         );
       },

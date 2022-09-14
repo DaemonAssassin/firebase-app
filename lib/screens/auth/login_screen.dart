@@ -8,6 +8,7 @@ import 'package:flutter_firebase/screens/auth/login_with_phone_no_screen.dart';
 import '../../utils/helper_widgets.dart';
 import '../post/post_screen.dart';
 import '../widgets/round_button.dart';
+import 'forgot_password_screen.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -56,79 +57,97 @@ class _LoginScreenState extends State<LoginScreen> {
             key: _formKey,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      hintText: 'Email',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Enter Email';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextFormField(
-                    controller: _passwordController,
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Password',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Enter Password';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 50.0),
-                  RoundButton(
-                      isLoading: isLoading,
-                      onTap: () {
-                        bool isValid = _formKey.currentState!.validate();
-                        if (isValid) {
-                          loginUser();
-                        }
-                      },
-                      title: 'Login'),
-                  const SizedBox(height: 16.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Don\'t have an account?'),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const SignupScreen(),
-                            ),
-                          );
-                        },
-                        child: const Text('Sign Up'),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        hintText: 'Email',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.email),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16.0),
-                  RoundButton(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const LoginWithPhoneNoScreen(),
-                      ));
-                    },
-                    title: 'Login With Phone',
-                  ),
-                ],
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter Email';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: _passwordController,
+                      keyboardType: TextInputType.text,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        hintText: 'Password',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.email),
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter Password';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 50.0),
+                    RoundButton(
+                        isLoading: isLoading,
+                        onTap: () {
+                          bool isValid = _formKey.currentState!.validate();
+                          if (isValid) {
+                            loginUser();
+                          }
+                        },
+                        title: 'Login'),
+                    const SizedBox(height: 16.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Don\'t have an account?'),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const SignupScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text('Sign Up'),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Forgot Password?'),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const ForgotPasswordScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text('Reset Password'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16.0),
+                    RoundButton(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const LoginWithPhoneNoScreen(),
+                        ));
+                      },
+                      title: 'Login With Phone',
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -156,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
       HelperWidgets.showToast(e.toString());
     }
     setState(() {
-      isLoading = true;
+      isLoading = false;
     });
   }
 }

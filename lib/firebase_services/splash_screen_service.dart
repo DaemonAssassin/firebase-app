@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/screens/upload_image_screen.dart';
+import 'package:flutter_firebase/screens/post/post_screen.dart';
 import '../screens/auth/login_screen.dart';
 
 class SplashScreenService {
@@ -17,8 +17,8 @@ class SplashScreenService {
     } else {
       Timer(
           const Duration(seconds: 3),
-          () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const UploadImageScreen())));
+          () => Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => const PostScreen())));
     }
   }
 }

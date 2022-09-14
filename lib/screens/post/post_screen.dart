@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
@@ -18,12 +20,14 @@ class _PostScreenState extends State<PostScreen> {
   late FirebaseAuth _firebaseAuth;
 
   late TextEditingController _searchController;
+  late TextEditingController _updateController;
 
   @override
   void initState() {
     super.initState();
     _firebaseAuth = FirebaseAuth.instance;
     _searchController = TextEditingController();
+    _updateController = TextEditingController();
     _firebaseAuth.authStateChanges().listen((User? user) {
       user == null ? print('signedOut') : print('SignIn');
     });
@@ -120,6 +124,31 @@ class _PostScreenState extends State<PostScreen> {
                     return ListTile(
                       title: Text(snapshot.child('id').value.toString()),
                       subtitle: Text(snapshot.child('title').value.toString()),
+                      trailing: PopupMenuButton(
+                        child: const Icon(Icons.more_vert),
+                        itemBuilder: (_) => [
+                          PopupMenuItem(
+                            child: ListTile(
+                              leading: const Icon(Icons.update),
+                              title: const Text('Update'),
+                              onTap: () async {
+                                await showUpdateDialog(
+                                  title,
+                                  snapshot.child('id').value.toString(),
+                                );
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                          PopupMenuItem(
+                            child: ListTile(
+                              leading: const Icon(Icons.delete),
+                              title: const Text('Delete'),
+                              onTap: () => Navigator.pop(context),
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   } else if (title
                       .trim()
@@ -146,6 +175,57 @@ class _PostScreenState extends State<PostScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> showUpdateDialog(String title, String id) async {
+    _updateController.text = title;
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _updateController,
+              keyboardType: TextInputType.text,
+              decoration: const InputDecoration(
+                hintText: 'Search',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.search),
+              ),
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return 'Enter Update value';
+                }
+                return null;
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  await FirebaseDatabase.instance.ref('Truck').child(id).update(
+                    {'title': _updateController.text},
+                  );
+                  HelperWidgets.showToast('Updated');
+                } catch (e) {
+                  HelperWidgets.showToast(e.toString());
+                }
+                Navigator.pop(context);
+              },
+              child: const Text('Update'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -59,19 +59,16 @@ class _AddNewPostScreenState extends State<AddNewPostScreen> {
               onTap: () async {
                 setState(() => _isLoading = true);
                 try {
-                  await _firebaseDBRef
-                      .child(DateTime.now().millisecondsSinceEpoch.toString())
-                      .set(
-                    {
-                      'id': DateTime.now().microsecondsSinceEpoch.toString(),
-                      'title': _postController.text
-                    },
+                  String id = DateTime.now().millisecondsSinceEpoch.toString();
+                  await _firebaseDBRef.child(id).set(
+                    {'id': id, 'title': _postController.text},
                   );
 
                   HelperWidgets.showToast('Data Added');
                 } catch (e) {
                   HelperWidgets.showToast(e.toString());
                 }
+                _postController.clear();
                 setState(() => _isLoading = false);
               },
               title: 'Add',

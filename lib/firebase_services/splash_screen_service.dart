@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/screens/firestore/firestore_list_screen.dart';
 import '../screens/auth/login_screen.dart';
-import '../screens/post/post_screen.dart';
 
 class SplashScreenService {
   void isLogin(BuildContext context) {
@@ -17,8 +17,8 @@ class SplashScreenService {
     } else {
       Timer(
           const Duration(seconds: 3),
-          () => Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => const PostScreen())));
+          () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const FireStoreListScreen())));
     }
   }
 }

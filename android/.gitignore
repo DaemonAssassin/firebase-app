@@ -1,6 +1,7 @@
 gradle-wrapper.jar
 /.gradle
 /captures/
+/android/app/google-services.json
 /gradlew
 /gradlew.bat
 /local.properties
